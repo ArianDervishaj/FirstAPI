@@ -4,68 +4,39 @@ const axios = require('axios')
 const cheerio = require('cheerio')
 const app = express()
 
-const newspapers = [
+const gameSites = [
     {
-        name: 'thetimes',
-        address: 'https://www.thetimes.co.uk/environment/climate-change'
-    },
-    {
-        name: 'guardian',
-        address: 'https://www.theguardian.com/'
+        name: 'jeuxvideo.com',
+        address: 'https://www.jeuxvideo.com/tous-les-jeux/'
     }
 ]
-const articles = []
-newspapers.forEach(newspaper => {
-    axios.get(newspaper.address)
+const games = []
+
+gameSites.forEach(gameSite => {
+    axios.get(gameSite.address)
         .then(response => {
             const html = response.data
             const $ = cheerio.load(html)
+            $('.container__3Ow3zD',html).each(function () {
+                const title = $(this).find('.gameTitleLink__196nPy').text()
+                const score = $(this).find('.editorialRating__1tYu_r').text()
 
-            $('a:contains("climate")', html).each(function () {
-                const title = $(this).text()
-                const url = $(this).attr('href')
-
-                articles.push({
+                games.push({
                     title,
-                    url,
-                    source: newspaper.name
+                    score
                 })
             })
         })
 })
 
 
+
 app.get('/', (req, res) => {
-    res.json("Welcome to my climate change new API")
+    res.json("Notes de jeuxvideos.com")
 })
 
-app.get('/news', (req,res) => {
-    res.json(articles)
-})
-
-app.get('/news/:newspaperID', (req,res) => {
-    const newspaperID = req.params.newspaperID
-
-    const newspaperAddress = newspapers.filter(newspaper => newspaper.name == newspaperID)[0].address
-
-    axios.get(newspaperAddress)
-        .then(response => {
-            const html = response.data
-            const $ = cheerio.load(html)
-            const specificArticles = []
-
-            $('a:contains("climate")', html).each(function () {
-                const title = $(this).text()
-                const url = $(this).attr('href')
-
-                specificArticles.push({
-                    title,
-                    url,
-                    source: newspaperID
-                })
-            })
-            res.json(specificArticles)
-        }).catch((err) => console.log(err))
+app.get('/games', (req,res) => {
+    res.json(games)
 })
 
 app.listen(PORT, () => console.log(`server running on port ${PORT}`))
