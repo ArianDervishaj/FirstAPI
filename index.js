@@ -1,4 +1,4 @@
-const PORT = 8000
+const PORT = process.env.PORT || 8000
 const express = require('express')
 const axios = require('axios')
 const cheerio = require('cheerio')
@@ -43,8 +43,29 @@ app.get('/news', (req,res) => {
     res.json(articles)
 })
 
-app.get('/news/:newspaperID', async(req,res) => {
-    
+app.get('/news/:newspaperID', (req,res) => {
+    const newspaperID = req.params.newspaperID
+
+    const newspaperAddress = newspapers.filter(newspaper => newspaper.name == newspaperID)[0].address
+
+    axios.get(newspaperAddress)
+        .then(response => {
+            const html = response.data
+            const $ = cheerio.load(html)
+            const specificArticles = []
+
+            $('a:contains("climate")', html).each(function () {
+                const title = $(this).text()
+                const url = $(this).attr('href')
+
+                specificArticles.push({
+                    title,
+                    url,
+                    source: newspaperID
+                })
+            })
+            res.json(specificArticles)
+        }).catch((err) => console.log(err))
 })
 
 app.listen(PORT, () => console.log(`server running on port ${PORT}`))
