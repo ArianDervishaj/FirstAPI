@@ -1,0 +1,24 @@
+{
+  "name": "firstapi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArianDervishaj/FirstAPI.git"
+  },
+  "author": "Arian Dervishaj",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ArianDervishaj/FirstAPI/issues"
+  },
+  "homepage": "https://github.com/ArianDervishaj/FirstAPI#readme",
+  "dependencies": {
+    "axios": "^1.2.3",
+    "cheerio": "^1.0.0-rc.12",
+    "express": "^4.18.2"
+  }
+}
